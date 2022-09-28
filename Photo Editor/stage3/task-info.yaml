@@ -6,3 +6,5 @@ files:
   visible: false
 - name: src/test/java/org/hyperskill/photoeditor/CustomShadowBitmap.kt
   visible: false
+- name: build.gradle
+  visible: true
