@@ -1,29 +1,63 @@
 <h2>Description</h2>
 
-<p>In this stage, we will add the <code>galleryButton</code> and the <code>ImageView</code> class<span style="color: #ff4363;"><strong> </strong></span>to display an image from the gallery. Users should be able to load any image from their gallery to <code>imageView</code>.</p>
+<p>
+  In this stage, we will add the <strong>galleryButton</strong> as well as
+  <strong>imageView</strong> to display an image chosen from the gallery.
+  Users should be able to load any image from their gallery to imageView.
+</p>
 
-<p><code>ImageView</code> is already set up in the layout and <code>MainActivity</code> class so that it has a default bitmap from the start. Tests depend on this bitmap, so, please, do not change this setup. Your virtual device probably doesn't have any images in the gallery folder, so to make a manual test, you can set up the gallery using the default camera app from your virtual device to add some pictures there.</p>
-
+<p>
+  The imageView is already set up in layout and MainActivity, so that it has
+  a default bitmap from the start. Tests in later stages depend on this bitmap,
+  so do not change this setup. In your virtual device you probably don&#39;t have
+  any images saved in your gallery folder, so to make manual test to your application
+  you can set up the gallery using&nbsp;the default camera app from your virtual device to add
+  some pictures there
+</p>
+<br/>
 <h2>Objectives</h2>
 
-<ul>
-  <li>Add a <code>Button</code> for opening your gallery folder with the <code>id</code> attribute of <code>btnGallery</code>;</li>
-  <li>Keep the already provided <code>ImageView</code> class with the <code>id</code> attribute of <code>ivPhoto</code> and also keep it's initialization code with the default image</li>
-  <li>Add an <code>OnClick</code> method to your <code>galleryButton</code>. It should launch a new Intent:</li>
-</ul>
+<ol>
+  <li>
+    Keep the <code>ImageView</code> with <code>id</code>&nbsp;<code>ivPhoto</code>,
+    which will display gallery image,&nbsp;and also keep the code to load
+    the default bitmap on the <code>onCreate</code> method
+  </li>
+  <li>
+    Add a <code>Button</code>&nbsp;for opening your gallery folder with&nbsp;the
+    <code>id</code>&nbsp;attribute <code>btnGallery</code>
+  </li>
 
-<pre><code class="language-kotlin">Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)</code></pre>
+  <li>
+    Create an <code>ActivityResultLauncher</code>
+    that will be used to load the image from gallery
+    (wide code better viewed on web)<br/><br/>
 
-<ul>
-  <li>Add the code that handles the result of this activity: </li>
-</ul>
+    <pre><code> private val activityResultLauncher =
+      registerForActivityResult(StartActivityForResult()) { result -&gt;
+        if (result.resultCode == Activity.RESULT_OK) {
+          val photoUri = result.data?.data ?: return@registerForActivityResult
+          // code to update ivPhoto with loaded image
+        }
+      }</code></pre>
+    <br/>
 
-<pre><code class="language-kotlin">resultLauncher = registerForActivityResult(StartActivityForResult()) { result -&gt;
-  if (result.resultCode == Activity.RESULT_OK) { ... }
-}</code></pre>
+  </li>
 
-<p>This helps <code>ivPhoto</code> so that the gallery image can be displayed in our app.</p>
+  <li>
+    When <code>btnGallery</code> is clicked launch an intent using the <code>activityResultLauncher</code> to load an image from gallery.
+    The intent should be as follows:<br/><br/>
+    <code>Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)</code>
+  </li>
 
-<h2>Example</h2>
+
+</ol>
+
+
+
+
+
+<h2>Examples</h2>
 
 <p><img alt="" height="520" name="Android Emulator - Pixel_3a_API_30_x86_5554 2021-12-04 19-28-09.gif" src="https://ucarecdn.com/be6bf9e2-425d-45db-9d12-0ac35cc50454/" width="270"></p>
+
