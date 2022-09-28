@@ -1,0 +1,30 @@
+<h2>Description</h2>
+
+<p>In this stage, we will implement our first filter — the <strong>brightness filter</strong>.</p>
+
+<p>Image brightness is simply the average RGB value, so:</p>
+
+<p><span class="math-tex">\[brightness =  \frac {(Red + Green + Blue)} 3\]</span></p>
+
+<p>To increase/decrease it, simply add or subtract the same amount from each RGB color. We will add a slider to adjust the image brightness.</p>
+
+<h2>Objectives</h2>
+
+<ul>
+  <li>Add a <code>Slider</code> widget with the <code>id</code> attribute of <code>slBrightness</code> for specifying the photo brightness; the values may vary from <code>-250</code> to <code>250</code> with the step size of <code>10</code> and the initial value of <code>0</code>;</li>
+  <li>Attach <code>onChangeListener</code> to this slider that will apply the brightness filter;</li>
+  <li>The brightness filter should add the current value of the brightness slider to each RGB value of the default photo bitmap and check whether the new value is within the correct boundaries (<code>0, 255</code>);</li>
+  <li>Every time users load a new image, you must save its default bitmap and operate on it while applying a brightness filter (not on the current bitmap, because the filter will erase image details).</li>
+</ul>
+<p>
+  obs: You are expected to implement the filter functionality manually, by directly manipulating
+  the pixel values of your bitmap. Solutions that only affect the rendered image like using
+  ColorFilter won't be able to pass tests.
+</p>
+<p></p>[ALERT-warning]Tests allow some margin error because of the possible differences that may occur due to rounding. Try to use <code>Ints</code> as much as possible, otherwise use <code>Doubles</code>.[/ALERT]<p></p>
+
+<h2>Example</h2>
+
+<p><strong>Example 1:</strong> <em>the brightness slider</em></p>
+
+<p><img alt="" height="520" name="Android Emulator - Pixel_3a_API_30_x86_5554 2021-12-05 11-27-38.gif" src="https://ucarecdn.com/979871ff-9976-404f-91d4-985927513d82/" width="270"></p>

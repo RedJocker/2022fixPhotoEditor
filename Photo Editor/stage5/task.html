@@ -1,0 +1,45 @@
+<h2>Description</h2>
+
+<p>Let's work on two more filters — <strong>saturation </strong>and<strong> gamma</strong>.</p>
+
+<p>To increase the <strong>saturation</strong>,<strong> </strong>we must increase the color intensity without affecting its brightness.</p>
+
+<p>An increase in <strong>gamma</strong> means that the image is more focused on shadows than highlights.</p>
+
+<h2>Objectives</h2>
+
+<ul>
+  <li>Add a <code>Slider</code> widget for specifying the photo saturation with the <code>id</code> attribute of <code>slSaturation</code>. The values may vary from <code>-250</code> to <code>250</code> with the step size of <code>10</code> and the initial value of <code>0</code>;</li>
+  <li>Add a <code>Slider</code> widget for specifying the photo gamma with the <code>id</code> attribute of <code>slGamma</code>. The values may vary from <code>0.2</code> to <code>4</code> with the step size of <code>0.2</code> and the initial value of <code>1</code>;</li>
+  <li>The saturation filter is calculated in the following way:</li>
+</ul>
+
+<p><span class="math-tex">\[Red = alpha \times (Red - rgbAvg) + rgbAvg \\ Green = alpha \times (Green - rgbAvg) + rgbAvg \\ Blue = alpha \times (Blue - rgbAvg) + rgbAvg\]</span>where:</p>
+
+<p><span class="math-tex">\[alpha = \frac {(255 + saturation)}{(255 - saturation)} \\\]</span><span class="math-tex">\[rgbAvg = \frac {(Red + Green + Blue)} 3\]</span></p>
+
+<p>Saturation is the current saturation slider value. The <code>rgbAvg</code> is calculated for each pixel, that is, each pixel has its own <code>rgbAvg</code>. The <code>rgbAvg</code> that is used for <code>saturationFilter</code> calculations, must be calculated after all previous filters have already been applied.</p>
+
+<ul>
+  <li>
+    <p>The gamma filter<strong> </strong>can be calculated in the following way:</p>
+  </li>
+</ul>
+
+<p><span class="math-tex">\[Red = 255 * (Red \div 255)^g \\ Green = 255 * (Green \div 255)^g \\ Blue = 255 * (Blue \div 255)^g\]</span>where:</p>
+
+<p><span class="math-tex">\(g\)</span> is the current gamma slider value.</p>
+
+<ul>
+  <li>
+    <p>As you know, the order of filters matters, so to pass the tests filters must be applied in the following order: <code>brightnessFilter</code> -&gt; <code>contrastFilter</code> -&gt; <code>saturationFilter</code> -&gt; <code>gammaFilter</code>;</p>
+  </li>
+</ul>
+
+<p></p>[ALERT-warning]Once again, the tests allow some margin rounding error, but it's recommended to use <code>Ints</code> and <code>Doubles</code> when necessary (power operations). Depending on an emulated/actual device, some sliders may be placed outside the view because the screen is not big enough. You can use <code>ScrollView</code> to get around that issue, but tests won't enforce it.[/ALERT]<p></p>
+
+<h2>Example</h2>
+
+<p><strong>Example 1:</strong> <em>sliders &amp; result</em></p>
+
+<p><img alt="" height="520" name="Android Emulator - Pixel_3a_API_30_x86_5554 2021-12-05 12-34-32.gif" src="https://ucarecdn.com/319a9c01-acb7-4a55-9704-1a23f58affce/" width="270"></p>

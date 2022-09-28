@@ -1,0 +1,6 @@
+type: edu
+files:
+- name: src/test/java/org/hyperskill/photoeditor/TestUtils.kt
+  visible: false
+- name: src/test/java/org/hyperskill/photoeditor/Stage5UnitTest.kt
+  visible: false
