@@ -4,3 +4,5 @@ files:
   visible: false
 - name: src/test/java/org/hyperskill/photoeditor/Stage6UnitTest.kt
   visible: false
+- name: build.gradle
+  visible: true
