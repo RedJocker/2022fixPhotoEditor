@@ -1,28 +1,23 @@
 package org.hyperskill.photoeditor
 
-import android.app.Activity
-import android.content.Intent
+
 import android.graphics.Bitmap
 import android.graphics.Color
 import android.os.Bundle
-import android.provider.MediaStore
-import android.view.View
 import android.widget.ImageView
-import androidx.activity.result.ActivityResult
-import androidx.activity.result.ActivityResultLauncher
-import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
 import androidx.appcompat.app.AppCompatActivity
 
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var currentImage: ImageView
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         bindViews()
 
-        //do not change this line
+        // loading initial image - required
         currentImage.setImageBitmap(createBitmap())
     }
 
@@ -30,12 +25,12 @@ class MainActivity : AppCompatActivity() {
         currentImage = findViewById(R.id.ivPhoto)
     }
 
-    // do not change this function
+
     fun createBitmap(): Bitmap {
+        // do not change the logic of this function, you can rename or relocate if you wish
         val width = 200
         val height = 100
         val pixels = IntArray(width * height)
-        // get pixel array from source
 
         var R: Int
         var G: Int
@@ -55,7 +50,7 @@ class MainActivity : AppCompatActivity() {
 
             }
         }
-        // output bitmap
+
         val bitmapOut = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565)
         bitmapOut.setPixels(pixels, 0, width, 0, 0, width, height)
         return bitmapOut
