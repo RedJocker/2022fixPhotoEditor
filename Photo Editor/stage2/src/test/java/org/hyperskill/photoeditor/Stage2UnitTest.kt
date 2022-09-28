@@ -105,7 +105,7 @@ class Stage2UnitTest : PhotoEditorUnitTest<MainActivity>(MainActivity::class.jav
     @Test
     fun test06_checkLoadedBitmapEdit() {
         testActivity {
-            ivPhoto // initializes variable and perform initialization assertions
+            ivPhoto
             slBrightness
             btnGallery.clickAndRun()
             shadowLooper.runToEndOfTasks()
