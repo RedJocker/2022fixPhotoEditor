@@ -1,4 +1,4 @@
-package org.hyperskill.photoeditor
+package org.hyperskill.photoeditor.internals
 
 import android.graphics.Bitmap
 import org.robolectric.annotation.Implementation
