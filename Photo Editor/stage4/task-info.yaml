@@ -1,8 +1,14 @@
 type: edu
 files:
-- name: src/test/java/org/hyperskill/photoeditor/TestUtils.kt
-  visible: false
 - name: src/test/java/org/hyperskill/photoeditor/Stage4UnitTest.kt
   visible: false
 - name: build.gradle
   visible: true
+- name: src/test/java/org/hyperskill/photoeditor/Stage2UnitTest.kt
+  visible: false
+- name: src/test/java/org/hyperskill/photoeditor/Stage3UnitTest.kt
+  visible: false
+- name: src/test/java/org/hyperskill/photoeditor/internals/AbstractUnitTest.kt
+  visible: false
+- name: src/test/java/org/hyperskill/photoeditor/internals/PhotoEditorUnitTest.kt
+  visible: false

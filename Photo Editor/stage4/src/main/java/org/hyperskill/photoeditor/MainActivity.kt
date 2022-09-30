@@ -160,9 +160,11 @@ class MainActivity : AppCompatActivity() {
         val contrastValue = contrastSlider.value.toInt()
 //        val averageBrightness = bitmap.calculateBrightnessMean()          // average with values before brightness filter, should produce "Wrong values after filters been applied. For x=_, y=_ expected: <(__, __, __)> actual: <(__, __, __)>"
         val averageBrightness = brightenCopy.calculateBrightnessMean()     // average with values after brightness filter
+        println("averageBrightness: $averageBrightness")
         val contrastedCopy = brightenCopy.contrastedCopy(contrastValue, averageBrightness)
 
         currentImage.setImageBitmap(contrastedCopy)
+//        currentImage.setImageBitmap(brightenCopy)
 //        currentImage.setImageBitmap(null)  // should produce "Image was null after filters been applied"
     }
 
