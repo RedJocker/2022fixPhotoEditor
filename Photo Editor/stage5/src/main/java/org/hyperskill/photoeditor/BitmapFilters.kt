@@ -121,7 +121,7 @@ object BitmapFilters {
         val green = updateValue(oldGreen)
 
         if(x == testedX && y == testedY) {
-            println("contrast R $red, G $green, B $blue, avgBright $averageBrightness, alpha $alpha" )
+            println("contrast R $red, G $green, B $blue, avgBright $averageBrightness, cAlpha $alpha" )
         }
 
         return Color.rgb(red, green, blue)
@@ -147,7 +147,7 @@ object BitmapFilters {
         val green = updateValue(oldGreen)
 
         if(x == testedX && y == testedY) {
-            println("saturation R $red, G $green, B $blue : u $pixelRgbAverage, alpha2 $alpha")
+            println("saturation R $red, G $green, B $blue, rgbAvg $pixelRgbAverage, sAlpha $alpha")
         }
 
         return Color.rgb(red, green, blue)
