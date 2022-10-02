@@ -22,6 +22,9 @@
 
 <ul>
   <li>
+    use <code>Int</code> for rgbAvg; for saturation alpha use <code>Double</code>
+  </li>
+  <li>
     <p>The gamma filter<strong> </strong>can be calculated in the following way:</p>
   </li>
 </ul>
@@ -36,7 +39,7 @@
   </li>
 </ul>
 
-<p></p>[ALERT-warning]Once again, the tests allow some margin rounding error, but it's recommended to use <code>Ints</code> and <code>Doubles</code> when necessary (power operations). Depending on an emulated/actual device, some sliders may be placed outside the view because the screen is not big enough. You can use <code>ScrollView</code> to get around that issue, but tests won't enforce it.[/ALERT]<p></p>
+<p>Obs: Depending on an emulated/actual device, some sliders may be placed outside the view because the screen is not big enough. You can use <code>ScrollView</code> to get around that issue, but tests won't enforce it.</p>
 
 <h2>Example</h2>
 
