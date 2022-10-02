@@ -27,9 +27,15 @@
 
 <p><span class="math-tex">\[avgBright = the\ average\ image\ brightness\]</span></p>
 
-<p>Contrast is the current state of the slider value. Once again tests allow some margin rounding error; it's recommended to use <code>ints</code>.</p>
+<p>Contrast is the current state of the slider value.</p>
 
 <ul>
+	<li>While calculating avgBright first accumulate all pixel brightness values then do the division instead of having partials of avgBright.
+		This is to avoid truncation problems with integer division on the partials.
+		You can use <code>Long</code> on the accumulator to avoid overflow issues,
+		but after the division you can use <code>Int</code> since the value is expected to be bound up to 255
+	</li>
+	<li>Use <code>Double</code> for contrast alpha</li>
 	<li>Order of filters matters. To pass the tests, filters must be applied in the following order: <code>brightnessFilter</code> -&gt; <code>contrastFilter</code>;</li>
 	<li>Color values should not get out of bounds: <code>[0, 255]</code>;</li>
 	<li>The <code>avgBrightness</code> should be calculated after brightness filter has already been applied.</li>
