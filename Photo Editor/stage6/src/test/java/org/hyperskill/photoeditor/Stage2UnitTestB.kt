@@ -7,6 +7,7 @@ import android.provider.MediaStore
 import org.hyperskill.photoeditor.internals.PhotoEditorUnitTest
 import org.junit.Assert.*
 import org.junit.FixMethodOrder
+import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.MethodSorters
@@ -17,16 +18,18 @@ import kotlin.math.min
 // version 2.0
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 @RunWith(RobolectricTestRunner::class)
-class Stage2UnitTest : PhotoEditorUnitTest<MainActivity>(MainActivity::class.java) {
+class Stage2UnitTestB : PhotoEditorUnitTest<MainActivity>(MainActivity::class.java) {
 
     companion object {
         const val messageNullAfterSlBrightness = "Image was null after slBrightness triggered"
         const val messageIntentNotFound = "No intent was found by tests. Have you launched an intent?"
         const val messageWrongValues = "Wrong values after brightness applied."
         const val marginError = 1
+        const val calculationWaitTime = 600L
     }
 
     @Test
+    @Ignore
     fun test01_checkImageView() {
         testActivity {
             ivPhoto
@@ -34,6 +37,7 @@ class Stage2UnitTest : PhotoEditorUnitTest<MainActivity>(MainActivity::class.jav
     }
 
     @Test
+    @Ignore
     fun test02_checkButtonGallery() {
         testActivity {
             btnGallery
@@ -41,6 +45,7 @@ class Stage2UnitTest : PhotoEditorUnitTest<MainActivity>(MainActivity::class.jav
     }
 
     @Test
+    @Ignore
     fun test03_checkSliderBrightness() {
         testActivity {
             slBrightness
@@ -48,6 +53,7 @@ class Stage2UnitTest : PhotoEditorUnitTest<MainActivity>(MainActivity::class.jav
     }
 
     @Test
+    @Ignore
     fun test04_checkSliderNotCrashing() {
         testActivity {
             ivPhoto
@@ -60,6 +66,7 @@ class Stage2UnitTest : PhotoEditorUnitTest<MainActivity>(MainActivity::class.jav
     }
 
     @Test
+    @Ignore
     fun test05_checkDefaultBitmapEdit() {
         testActivity {
             slBrightness
@@ -75,7 +82,7 @@ class Stage2UnitTest : PhotoEditorUnitTest<MainActivity>(MainActivity::class.jav
             slBrightness.value += slBrightness.stepSize * 5
             slBrightness.value += slBrightness.stepSize * 6
             shadowLooper.runToEndOfTasks()
-            Thread.sleep(200)
+            Thread.sleep(calculationWaitTime)
             shadowLooper.runToEndOfTasks()
 
             val actualImage1 = (ivPhoto.drawable as BitmapDrawable).bitmap ?: throw AssertionError(
@@ -89,7 +96,7 @@ class Stage2UnitTest : PhotoEditorUnitTest<MainActivity>(MainActivity::class.jav
             slBrightness.value -= slBrightness.stepSize * 10
             slBrightness.value -= slBrightness.stepSize * 13
             shadowLooper.runToEndOfTasks()
-            Thread.sleep(200)
+            Thread.sleep(calculationWaitTime)
             shadowLooper.runToEndOfTasks()
 
             val actualImage2 = (ivPhoto.drawable as BitmapDrawable).bitmap ?: throw AssertionError(
@@ -141,7 +148,7 @@ class Stage2UnitTest : PhotoEditorUnitTest<MainActivity>(MainActivity::class.jav
             slBrightness.value += slBrightness.stepSize * 3
             slBrightness.value += slBrightness.stepSize * 2
             shadowLooper.runToEndOfTasks()
-            Thread.sleep(200)
+            Thread.sleep(calculationWaitTime)
             shadowLooper.runToEndOfTasks()
 
             val actualImage = (ivPhoto.drawable as BitmapDrawable).bitmap ?: throw AssertionError(
@@ -164,7 +171,7 @@ class Stage2UnitTest : PhotoEditorUnitTest<MainActivity>(MainActivity::class.jav
             slBrightness.value += slBrightness.stepSize * 15
             slBrightness.value -= slBrightness.stepSize * 4
             shadowLooper.runToEndOfTasks()
-            Thread.sleep(200)
+            Thread.sleep(calculationWaitTime)
             shadowLooper.runToEndOfTasks()
 
             val actualImage1 = (ivPhoto.drawable as BitmapDrawable).bitmap ?: throw AssertionError(

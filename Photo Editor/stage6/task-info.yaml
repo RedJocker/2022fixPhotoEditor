@@ -4,13 +4,13 @@ files:
   visible: false
 - name: build.gradle
   visible: true
-- name: src/test/java/org/hyperskill/photoeditor/Stage5UnitTest.kt
+- name: src/test/java/org/hyperskill/photoeditor/Stage5UnitTestB.kt
   visible: false
-- name: src/test/java/org/hyperskill/photoeditor/Stage4UnitTest.kt
+- name: src/test/java/org/hyperskill/photoeditor/Stage4UnitTestB.kt
   visible: false
 - name: src/test/java/org/hyperskill/photoeditor/Stage3UnitTest.kt
   visible: false
-- name: src/test/java/org/hyperskill/photoeditor/Stage2UnitTest.kt
+- name: src/test/java/org/hyperskill/photoeditor/Stage2UnitTestB.kt
   visible: false
 - name: src/test/java/org/hyperskill/photoeditor/internals/PhotoEditorUnitTest.kt
   visible: false

@@ -3,22 +3,28 @@ package org.hyperskill.photoeditor
 import android.graphics.drawable.BitmapDrawable
 import org.hyperskill.photoeditor.internals.PhotoEditorUnitTest
 import org.junit.FixMethodOrder
+import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.MethodSorters
 import org.robolectric.RobolectricTestRunner
 
+
+
 // version 2.0
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 @RunWith(RobolectricTestRunner::class)
-class Stage5UnitTest : PhotoEditorUnitTest<MainActivity>(MainActivity::class.java) {
+class Stage5UnitTestB : PhotoEditorUnitTest<MainActivity>(MainActivity::class.java) {
 
-    private val messageNullAfterFilters = "Image was null after filters been applied"
-    private val messageWrongValues = "Wrong values after filters been applied."
-    private val marginError = 3
-
+    companion object {
+        const val messageNullAfterFilters = "Image was null after filters been applied"
+        const val messageWrongValues = "Wrong values after filters been applied."
+        const val marginError = 3
+        const val calculationWaitTime = 600L
+    }
 
     @Test
+    @Ignore
     fun test01_checkSliderSaturation() {
         testActivity {
             slSaturation
@@ -26,6 +32,7 @@ class Stage5UnitTest : PhotoEditorUnitTest<MainActivity>(MainActivity::class.jav
     }
 
     @Test
+    @Ignore
     fun test02_checkSliderGamma() {
         testActivity {
             slGamma
@@ -33,23 +40,14 @@ class Stage5UnitTest : PhotoEditorUnitTest<MainActivity>(MainActivity::class.jav
     }
 
     @Test
+    @Ignore
     fun test03_checkSliderSaturationNotCrashingByDefault() {
         testActivity {
             ivPhoto
             slSaturation.value += slSaturation.stepSize
             slSaturation.value -= slSaturation.stepSize
             shadowLooper.runToEndOfTasks()
-            (ivPhoto.drawable as BitmapDrawable?)?.bitmap ?: throw AssertionError(
-                messageNullAfterFilters)
-        }
-    }
-
-    @Test
-    fun test04_checkSliderGammaNotCrashingByDefault() {
-        testActivity {
-            ivPhoto
-            slGamma.value += slGamma.stepSize
-            slGamma.value -= slGamma.stepSize
+            Thread.sleep(calculationWaitTime)
             shadowLooper.runToEndOfTasks()
             (ivPhoto.drawable as BitmapDrawable?)?.bitmap ?: throw AssertionError(
                 messageNullAfterFilters)
@@ -57,6 +55,22 @@ class Stage5UnitTest : PhotoEditorUnitTest<MainActivity>(MainActivity::class.jav
     }
 
     @Test
+    @Ignore
+    fun test04_checkSliderGammaNotCrashingByDefault() {
+        testActivity {
+            ivPhoto
+            slGamma.value += slGamma.stepSize
+            slGamma.value -= slGamma.stepSize
+            shadowLooper.runToEndOfTasks()
+            Thread.sleep(calculationWaitTime)
+            shadowLooper.runToEndOfTasks()
+            (ivPhoto.drawable as BitmapDrawable?)?.bitmap ?: throw AssertionError(
+                messageNullAfterFilters)
+        }
+    }
+
+    @Test
+    @Ignore
     fun test05_checkSaturationOnlyWithHints() {
         testActivity {
             slSaturation
@@ -66,7 +80,7 @@ class Stage5UnitTest : PhotoEditorUnitTest<MainActivity>(MainActivity::class.jav
             slSaturation.value -=  3 * slSaturation.stepSize
 
             shadowLooper.runToEndOfTasks()
-            Thread.sleep(200)
+            Thread.sleep(calculationWaitTime)
             shadowLooper.runToEndOfTasks()
 
             val actualImage = (ivPhoto.drawable as BitmapDrawable?)?.bitmap ?: throw AssertionError(
@@ -89,7 +103,7 @@ class Stage5UnitTest : PhotoEditorUnitTest<MainActivity>(MainActivity::class.jav
             slSaturation.value += 8 * slSaturation.stepSize
 
             shadowLooper.runToEndOfTasks()
-            Thread.sleep(200)
+            Thread.sleep(calculationWaitTime)
             shadowLooper.runToEndOfTasks()
 
             val actualImage = (ivPhoto.drawable as BitmapDrawable?)?.bitmap ?: throw AssertionError(
@@ -103,6 +117,7 @@ class Stage5UnitTest : PhotoEditorUnitTest<MainActivity>(MainActivity::class.jav
     }
 
     @Test
+    @Ignore
     fun test07_checkGammaOnlyWithHints() {
         testActivity {
             slGamma
@@ -112,7 +127,7 @@ class Stage5UnitTest : PhotoEditorUnitTest<MainActivity>(MainActivity::class.jav
             slGamma.value -= 4 * slGamma.stepSize
 
             shadowLooper.runToEndOfTasks()
-            Thread.sleep(200)
+            Thread.sleep(calculationWaitTime)
             shadowLooper.runToEndOfTasks()
 
             val actualImage = (ivPhoto.drawable as BitmapDrawable?)?.bitmap ?: throw AssertionError(
@@ -135,7 +150,7 @@ class Stage5UnitTest : PhotoEditorUnitTest<MainActivity>(MainActivity::class.jav
             slGamma.value += 4 * slGamma.stepSize
 
             shadowLooper.runToEndOfTasks()
-            Thread.sleep(200)
+            Thread.sleep(calculationWaitTime)
             shadowLooper.runToEndOfTasks()
 
             val actualImage = (ivPhoto.drawable as BitmapDrawable?)?.bitmap ?: throw AssertionError(
@@ -167,7 +182,7 @@ class Stage5UnitTest : PhotoEditorUnitTest<MainActivity>(MainActivity::class.jav
             slGamma.value -= slGamma.stepSize * 2
 
             shadowLooper.runToEndOfTasks()
-            Thread.sleep(200)
+            Thread.sleep(calculationWaitTime)
             shadowLooper.runToEndOfTasks()
 
             val actualImage = (ivPhoto.drawable as BitmapDrawable?)?.bitmap ?: throw AssertionError(
@@ -197,7 +212,7 @@ class Stage5UnitTest : PhotoEditorUnitTest<MainActivity>(MainActivity::class.jav
             slBrightness.value += slBrightness.stepSize
 
             shadowLooper.runToEndOfTasks()
-            Thread.sleep(200)
+            Thread.sleep(calculationWaitTime)
             shadowLooper.runToEndOfTasks()
 
             val actualImage = (ivPhoto.drawable as BitmapDrawable?)?.bitmap ?: throw AssertionError(
@@ -245,15 +260,14 @@ class Stage5UnitTest : PhotoEditorUnitTest<MainActivity>(MainActivity::class.jav
             )
 
 
-            slContrast.value += slContrast.stepSize * 4
+            slContrast.value += slContrast.stepSize * 5
             slBrightness.value += slBrightness.stepSize
-            slContrast.value += slContrast.stepSize
             slGamma.value -= slGamma.stepSize * 2
-            slSaturation.value += slSaturation.stepSize * 10
-            slSaturation.value += slSaturation.stepSize * 5
+            slSaturation.value += slSaturation.stepSize * 15
+
 
             shadowLooper.runToEndOfTasks()
-            Thread.sleep(200)
+            Thread.sleep(calculationWaitTime)
             shadowLooper.runToEndOfTasks()
 
             val actualImage = (ivPhoto.drawable as BitmapDrawable?)?.bitmap ?: throw AssertionError(

@@ -8,15 +8,19 @@ import org.junit.runner.RunWith
 import org.junit.runners.MethodSorters
 import org.robolectric.RobolectricTestRunner
 
+
+
 // version 2.0
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 @RunWith(RobolectricTestRunner::class)
 class Stage5UnitTest : PhotoEditorUnitTest<MainActivity>(MainActivity::class.java) {
 
-    private val messageNullAfterFilters = "Image was null after filters been applied"
-    private val messageWrongValues = "Wrong values after filters been applied."
-    private val marginError = 3
-
+    companion object {
+        const val messageNullAfterFilters = "Image was null after filters been applied"
+        const val messageWrongValues = "Wrong values after filters been applied."
+        const val marginError = 3
+        const val calculationWaitTime = 200L
+    }
 
     @Test
     fun test01_checkSliderSaturation() {
@@ -66,7 +70,7 @@ class Stage5UnitTest : PhotoEditorUnitTest<MainActivity>(MainActivity::class.jav
             slSaturation.value -=  3 * slSaturation.stepSize
 
             shadowLooper.runToEndOfTasks()
-            Thread.sleep(200)
+            Thread.sleep(calculationWaitTime)
             shadowLooper.runToEndOfTasks()
 
             val actualImage = (ivPhoto.drawable as BitmapDrawable?)?.bitmap ?: throw AssertionError(
@@ -89,7 +93,7 @@ class Stage5UnitTest : PhotoEditorUnitTest<MainActivity>(MainActivity::class.jav
             slSaturation.value += 8 * slSaturation.stepSize
 
             shadowLooper.runToEndOfTasks()
-            Thread.sleep(200)
+            Thread.sleep(calculationWaitTime)
             shadowLooper.runToEndOfTasks()
 
             val actualImage = (ivPhoto.drawable as BitmapDrawable?)?.bitmap ?: throw AssertionError(
@@ -112,7 +116,7 @@ class Stage5UnitTest : PhotoEditorUnitTest<MainActivity>(MainActivity::class.jav
             slGamma.value -= 4 * slGamma.stepSize
 
             shadowLooper.runToEndOfTasks()
-            Thread.sleep(200)
+            Thread.sleep(calculationWaitTime)
             shadowLooper.runToEndOfTasks()
 
             val actualImage = (ivPhoto.drawable as BitmapDrawable?)?.bitmap ?: throw AssertionError(
@@ -135,7 +139,7 @@ class Stage5UnitTest : PhotoEditorUnitTest<MainActivity>(MainActivity::class.jav
             slGamma.value += 4 * slGamma.stepSize
 
             shadowLooper.runToEndOfTasks()
-            Thread.sleep(200)
+            Thread.sleep(calculationWaitTime)
             shadowLooper.runToEndOfTasks()
 
             val actualImage = (ivPhoto.drawable as BitmapDrawable?)?.bitmap ?: throw AssertionError(
@@ -167,7 +171,7 @@ class Stage5UnitTest : PhotoEditorUnitTest<MainActivity>(MainActivity::class.jav
             slGamma.value -= slGamma.stepSize * 2
 
             shadowLooper.runToEndOfTasks()
-            Thread.sleep(200)
+            Thread.sleep(calculationWaitTime)
             shadowLooper.runToEndOfTasks()
 
             val actualImage = (ivPhoto.drawable as BitmapDrawable?)?.bitmap ?: throw AssertionError(
@@ -197,7 +201,7 @@ class Stage5UnitTest : PhotoEditorUnitTest<MainActivity>(MainActivity::class.jav
             slBrightness.value += slBrightness.stepSize
 
             shadowLooper.runToEndOfTasks()
-            Thread.sleep(200)
+            Thread.sleep(calculationWaitTime)
             shadowLooper.runToEndOfTasks()
 
             val actualImage = (ivPhoto.drawable as BitmapDrawable?)?.bitmap ?: throw AssertionError(
@@ -253,7 +257,7 @@ class Stage5UnitTest : PhotoEditorUnitTest<MainActivity>(MainActivity::class.jav
             slSaturation.value += slSaturation.stepSize * 5
 
             shadowLooper.runToEndOfTasks()
-            Thread.sleep(200)
+            Thread.sleep(calculationWaitTime)
             shadowLooper.runToEndOfTasks()
 
             val actualImage = (ivPhoto.drawable as BitmapDrawable?)?.bitmap ?: throw AssertionError(

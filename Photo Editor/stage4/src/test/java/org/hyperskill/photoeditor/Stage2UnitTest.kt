@@ -24,6 +24,7 @@ class Stage2UnitTest : PhotoEditorUnitTest<MainActivity>(MainActivity::class.jav
         const val messageIntentNotFound = "No intent was found by tests. Have you launched an intent?"
         const val messageWrongValues = "Wrong values after brightness applied."
         const val marginError = 1
+        const val calculationWaitTime = 200L
     }
 
     @Test
@@ -75,7 +76,7 @@ class Stage2UnitTest : PhotoEditorUnitTest<MainActivity>(MainActivity::class.jav
             slBrightness.value += slBrightness.stepSize * 5
             slBrightness.value += slBrightness.stepSize * 6
             shadowLooper.runToEndOfTasks()
-            Thread.sleep(200)
+            Thread.sleep(calculationWaitTime)
             shadowLooper.runToEndOfTasks()
 
             val actualImage1 = (ivPhoto.drawable as BitmapDrawable).bitmap ?: throw AssertionError(
@@ -89,7 +90,7 @@ class Stage2UnitTest : PhotoEditorUnitTest<MainActivity>(MainActivity::class.jav
             slBrightness.value -= slBrightness.stepSize * 10
             slBrightness.value -= slBrightness.stepSize * 13
             shadowLooper.runToEndOfTasks()
-            Thread.sleep(200)
+            Thread.sleep(calculationWaitTime)
             shadowLooper.runToEndOfTasks()
 
             val actualImage2 = (ivPhoto.drawable as BitmapDrawable).bitmap ?: throw AssertionError(
@@ -141,7 +142,7 @@ class Stage2UnitTest : PhotoEditorUnitTest<MainActivity>(MainActivity::class.jav
             slBrightness.value += slBrightness.stepSize * 3
             slBrightness.value += slBrightness.stepSize * 2
             shadowLooper.runToEndOfTasks()
-            Thread.sleep(200)
+            Thread.sleep(calculationWaitTime)
             shadowLooper.runToEndOfTasks()
 
             val actualImage = (ivPhoto.drawable as BitmapDrawable).bitmap ?: throw AssertionError(
@@ -164,7 +165,7 @@ class Stage2UnitTest : PhotoEditorUnitTest<MainActivity>(MainActivity::class.jav
             slBrightness.value += slBrightness.stepSize * 15
             slBrightness.value -= slBrightness.stepSize * 4
             shadowLooper.runToEndOfTasks()
-            Thread.sleep(200)
+            Thread.sleep(calculationWaitTime)
             shadowLooper.runToEndOfTasks()
 
             val actualImage1 = (ivPhoto.drawable as BitmapDrawable).bitmap ?: throw AssertionError(
