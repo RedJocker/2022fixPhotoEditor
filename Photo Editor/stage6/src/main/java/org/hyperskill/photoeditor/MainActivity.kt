@@ -1,250 +1,164 @@
 package org.hyperskill.photoeditor
 
-
 import android.Manifest
 import android.app.Activity
+import android.content.ContentValues
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Color
-import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
 import android.provider.MediaStore
 import android.widget.Button
 import android.widget.ImageView
-import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.graphics.drawable.toBitmap
 import com.google.android.material.slider.Slider
-import android.provider.MediaStore.Images
-
-import android.content.ContentValues
-import android.content.pm.PackageManager
-import android.graphics.BitmapFactory
-import android.os.Build
-import android.util.Log
-import androidx.core.content.PermissionChecker
-import androidx.core.graphics.scale
 import kotlinx.coroutines.*
 
-import org.hyperskill.photoeditor.BitmapFilters.brightenCopy
-import org.hyperskill.photoeditor.BitmapFilters.calculateBrightnessMean
-import org.hyperskill.photoeditor.BitmapFilters.contrastedCopy
-import org.hyperskill.photoeditor.BitmapFilters.gammaCopy
-import org.hyperskill.photoeditor.BitmapFilters.saturatedCopy
-
+private val saveDir = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+private const val SAVE_EXTERNAL_PERMISSION = Manifest.permission.WRITE_EXTERNAL_STORAGE
+private const val SAVE_EXTERNAL_REQUEST_CODE = 0
 
 class MainActivity : AppCompatActivity() {
+    private lateinit var currentImage: ImageView
+    private lateinit var imageProcessor: ImageProcessor
+    private lateinit var btnGallery: Button
+    private lateinit var save: Button
+    private lateinit var slider: Slider
+    private lateinit var slContrast: Slider
+    private lateinit var slSaturation: Slider
+    private lateinit var slGamma: Slider
+    private var lastJob: Job? = null  // the field to keep track of the last job in case we wish to cancel it
 
-    private val currentImage: ImageView by lazy {
-        findViewById<ImageView>(R.id.ivPhoto)
-    }
-    private val galleryButton: Button by lazy {
-        findViewById<Button>(R.id.btnGallery)
-//                    .also { it.text = "wrongText" }    // should produce "Wrong text for btnGallery expected:<[GALLERY]> but was:<[WRONGTEXT]>"
-    }
-    private val saveButton : Button by lazy {
-        findViewById<Button>(R.id.btnSave)
-//            .also{ it.text = "wrong value" }  // should produce "Wrong text for btnSave expected:<[SAVE]> but was:<[WRONG VALUE]>"
-    }
-    private val brightnessSlider: Slider by lazy {
-        findViewById<Slider>(R.id.slBrightness)
-//            .also {
-//                it.stepSize = 0.2f       // should produce ""slBrightness" should have proper stepSize attribute expected:<10.0> but was:<0.2>"
-//                it.valueFrom = 0f       // should produce ""slBrightness" should have proper valueFrom attribute expected:<-250.0> but was:<0.0>"
-//                it.valueTo = 500f      // should produce ""slBrightness" should have proper valueTo attribute expected:<250.0> but was:<500.0>"
-//                it.value = 100f       // should produce ""slBrightness" should have proper initial value expected:<0.0> but was:<100.0>"
-//            }
-    }
-    private val contrastSlider: Slider by lazy {
-        findViewById<Slider>(R.id.slContrast)
-//            .also {
-//                it.stepSize = 0.5f        // should produce ""slContrast" should have proper stepSize attribute expected:<10.0> but was:<0.5>"
-//                it.valueFrom = -100.0f   // should produce ""slContrast" should have proper valueFrom attribute expected:<-250.0> but was:<-100.0>"
-//                it.valueTo = 100.0f     // should produce ""slContrast" should have proper valueTo attribute expected:<250.0> but was:<100.0>"
-//                it.value = 50.0f       // should produce ""slContrast" should have proper initial value expected:<0.0> but was:<50.0>"
-//            }
-    }
-    private val saturationSlider: Slider by lazy {
-        findViewById<Slider>(R.id.slSaturation)
-//            .also {
-//                it.stepSize = 2f           // should produce ""slSaturation" should have proper stepSize attribute expected:<10.0> but was:<2.0>"
-//                it.valueFrom = -120f      // should produce ""slSaturation" should have proper valueFrom attribute expected:<-250.0> but was:<-120.0>"
-//                it.valueTo = 250f        // should produce ""slSaturation" should have proper initial value expected:<0.0> but was:<50.0>"
-//                it.value = 50f          // should produce ""slSaturation" should have proper initial value expected:<0.0> but was:<50.0>"
-//            }
-    }
-    private val gammaSlider: Slider by lazy {
-        findViewById<Slider>(R.id.slGamma)
-//            .also {
-//                it.stepSize = 0.1f          // should produce ""slGamma" should have proper stepSize attribute expected:<0.2> but was:<10.0>"
-//                it.valueFrom = -250f      // should produce ""slGamma" should have proper valueFrom attribute expected:<0.2> but was:<-250.0>"
-//                it.valueTo = 250f        // should produce ""slGamma" should have proper valueTo attribute expected:<4.0> but was:<250.0>"
-//                it.value = 2.0f           // should produce ""slGamma" should have proper initial value expected:<1.0> but was:<2.0>"
-//            }
-    }
-
-    private val intentLauncher: ActivityResultLauncher<Intent> =
+    //private lateinit var binding: ActivityMainBinding
+    private val imageResultLauncher =
         registerForActivityResult(StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
-                val uri = result.data?.data ?: return@registerForActivityResult
-                currentImage.setImageURI(uri)
-                currentOriginalImageDrawable = currentImage.drawable as BitmapDrawable?
+                result.data?.data?.let {
+                    val bitmap = imageProcessor.createBitmap(it)
+                    currentImage.setImageBitmap(bitmap)
+                }
             }
         }
 
-    private var currentOriginalImageDrawable: BitmapDrawable? = null
-    private var lastJob: Job? = null
+    private fun callimageproc(bright: Float, contrast: Float, satur: Float, gamma: Float)  {
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-        setListener()
-
-        //do not change this line
-        currentImage.setImageBitmap(createBitmap())      // commenting out this line should produce "Initial image was null, it should be set with ___.setImageBitmap(createBitmap())"
-//        currentImage.setImageBitmap(createBitmap().scale(10, 100))  // should produce "Is defaultBitmap set correctly? It should be set with ___.setImageBitmap(createBitmap())"
-//        currentImage.setImageBitmap(createBitmap().scale(200, 10))  // should produce "Is defaultBitmap set correctly? It should be set with ___.setImageBitmap(createBitmap())"
-//        currentImage.setImageBitmap(BitmapFactory.decodeResource(this.resources, R.drawable.myexample).scale(200, 100))  // should produce "Is defaultBitmap set correctly? It should be set with ___.setImageBitmap(createBitmap())"
-        //
-
-        currentOriginalImageDrawable = currentImage.drawable as BitmapDrawable?
-    }
-
-
-
-    private fun setListener() {
-        galleryButton.setOnClickListener { _ ->
-            val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-            intentLauncher.launch(intent)
-        }
-
-        saveButton.setOnClickListener { _ ->
-            if(hasPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-                val bitmap = ((currentImage.drawable as BitmapDrawable?)?.bitmap ?: return@setOnClickListener)
-
-                val values = ContentValues()
-
-                values.put(Images.Media.DATE_TAKEN, System.currentTimeMillis())
-                values.put(Images.Media.MIME_TYPE, "image/jpeg")
-                values.put(Images.ImageColumns.WIDTH, bitmap.width)
-                values.put(Images.ImageColumns.HEIGHT, bitmap.height)
-
-                val uri = this@MainActivity.contentResolver.insert(
-                    Images.Media.EXTERNAL_CONTENT_URI, values
-                ) ?: return@setOnClickListener
-
-                val openOutputStream = contentResolver.openOutputStream(uri)
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, openOutputStream)
-            } else {
-                requestPermissions(listOf(Manifest.permission.WRITE_EXTERNAL_STORAGE))
-            }
-
-        }
-
-        brightnessSlider.addOnChangeListener(this::onSliderChanges)
-        contrastSlider.addOnChangeListener(this::onSliderChanges)
-        saturationSlider.addOnChangeListener(this::onSliderChanges)
-        gammaSlider.addOnChangeListener(this::onSliderChanges)
-
-
-////      // case without coroutines (comment block above)      should produce "Are your filters being applied asynchronously?. expected: <(__, __, __)> actual: <(__, __, __)>"
-//        brightnessSlider.addOnChangeListener(this::onSliderChangesWithoutCoroutines)
-//        contrastSlider.addOnChangeListener(this::onSliderChangesWithoutCoroutines)
-//        saturationSlider.addOnChangeListener(this::onSliderChangesWithoutCoroutines)
-//        gammaSlider.addOnChangeListener(this::onSliderChangesWithoutCoroutines)
-
-    }
-
-
-    private fun onSliderChangesWithoutCoroutines(slider: Slider, sliderValue: Float, fromUser: Boolean){
-        val bitmap = currentOriginalImageDrawable?.bitmap ?: return
-
-        val brightnessValue = brightnessSlider.value.toInt()
-        val brightenCopy = bitmap.brightenCopy(brightnessValue)
-
-        val contrastValue = contrastSlider.value.toInt()
-        val averageBrightness = brightenCopy.calculateBrightnessMean()
-        val contrastedCopy = brightenCopy.contrastedCopy(contrastValue, averageBrightness)
-
-        val saturationValue = saturationSlider.value.toInt()
-        val saturatedCopy = contrastedCopy.saturatedCopy(saturationValue, contrastedCopy)
-
-        val gammaValue = gammaSlider.value
-        val gammaCopy = saturatedCopy.gammaCopy(gammaValue)
-
-        currentImage.setImageBitmap(gammaCopy)
-    }
-
-    private fun onSliderChanges(slider: Slider, sliderValue: Float, fromUser: Boolean) {
-
-        lastJob?.cancel()
 
         lastJob = GlobalScope.launch(Dispatchers.Default) {
+            //  the execution inside this block is already asynchronous as you can see by the print below
+
             //  I/System.out: onSliderChanges job making calculations running on thread DefaultDispatcher-worker-1
             println("onSliderChanges " + "job making calculations running on thread ${Thread.currentThread().name}")
 
-            val bitmap = currentOriginalImageDrawable?.bitmap ?: return@launch
+            // if the current image is null, we have nothing to do with it
+            //val bitmap = currentOriginalImageDrawable?.bitmap ?: return@launch
 
+
+            // if you need to make some computations and wait for the result, you can use the async block
+            // it will schedule a new coroutine task and return a Deferred object that will have the
+            // returned value
             val brightenCopyDeferred: Deferred<Bitmap> = this.async {
-                val brightnessValue = brightnessSlider.value.toInt()
-                bitmap.brightenCopy(brightnessValue)
+                return@async imageProcessor.changeBrightness(bright.toInt(), contrast.toInt(), satur.toInt(), gamma.toDouble())
             }
-            val brightenCopy: Bitmap = brightenCopyDeferred.await()
-
-            val contrastedCopyDeferred: Deferred<Bitmap> = this.async {
-                val contrastValue = contrastSlider.value.toInt()
-                val averageBrightness = brightenCopy.calculateBrightnessMean()
-                brightenCopy.contrastedCopy(contrastValue, averageBrightness)
-            }
-            val contrastedCopy = contrastedCopyDeferred.await()
-
-            val saturatedCopyDeferred: Deferred<Bitmap> = this.async {
-                val saturationValue = saturationSlider.value.toInt()
-                contrastedCopy.saturatedCopy(saturationValue, contrastedCopy)
-            }
-            val saturatedCopy = saturatedCopyDeferred.await()
-
-            val gammaCopyDeferred: Deferred<Bitmap> = this.async {
-                val gammaValue = gammaSlider.value
-                saturatedCopy.gammaCopy(gammaValue)
-            }
-            val gammaCopy = gammaCopyDeferred.await()
-
+            // here we wait for the result
+            val newBitmap: Bitmap = brightenCopyDeferred.await()
             runOnUiThread {
-                //  I/System.out: onSliderChanges job updating view running on thread main
-                println("onSliderChanges " + "job updating view running on thread ${Thread.currentThread().name}")
-                currentImage.setImageBitmap(gammaCopy)
-            }
-        }
-    }
-
-    private fun hasPermission(manifestPermission: String): Boolean {
-        return if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            this.checkSelfPermission(manifestPermission) == PackageManager.PERMISSION_GRANTED
-        } else {
-            PermissionChecker.checkSelfPermission(this, manifestPermission) == PermissionChecker.PERMISSION_GRANTED
-        }
-    }
-
-    private fun requestPermissions(permissionsToRequest: List<String>) {
-        permissionsToRequest.filter { permissionToRequest ->
-            hasPermission(permissionToRequest).not()
-        }.also {
-            if(it.isEmpty().not()) {
-                // asking runtime permission is only for M or above. Before M permissions are
-                // required on installation based on AndroidManifest.xml, so in theory it should
-                // have required permissions if it is running
-                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    Log.i("Permission", "requestPermissions")
-                    this.requestPermissions(it.toTypedArray(), 0)
-                } else {
-                    // this should happen only if permission not requested on AndroidManifest.xml
-                    Log.i("Permission", "missing required permission")
+                    // here we are already on the main thread, as you can see on the println below
+                    //  I/System.out: onSliderChanges job updating view running on thread main
+                    println("onSliderChanges " + "job updating view running on thread ${Thread.currentThread().name}")
+                    currentImage.setImageBitmap(newBitmap)
                 }
-            } else {
-                Log.i("Permission",  "All required permissions are granted")
-            }
         }
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        //binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(R.layout.activity_main)
+        bindViews()
+
+        //do not change this line
+        val bitmap = createBitmap()
+        currentImage.setImageBitmap(bitmap)
+        imageProcessor = ImageProcessor(this, bitmap)
+
+        btnGallery.setOnClickListener {
+            val selectImageIntent = Intent(
+                Intent.ACTION_PICK,
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+            )
+            imageResultLauncher.launch(selectImageIntent)
+        }
+
+        save.setOnClickListener {
+            onSaveClick()
+        }
+
+
+
+        slider.addOnChangeListener { _, _, _ ->
+            callimageproc(slider.value, slContrast.value, slSaturation.value, slGamma.value)
+        }
+
+        slContrast.addOnChangeListener { _, _, _ ->
+
+            callimageproc(slider.value, slContrast.value, slSaturation.value, slGamma.value)
+        }
+
+        slSaturation.addOnChangeListener { _, _, _ ->
+
+            callimageproc(slider.value, slContrast.value, slSaturation.value, slGamma.value)
+        }
+        slGamma.addOnChangeListener { _, _, _ ->
+
+            callimageproc(slider.value, slContrast.value, slSaturation.value, slGamma.value)
+        }
+    }
+
+    private fun onSaveClick() {
+        Permission(this, SAVE_EXTERNAL_PERMISSION).apply {
+            check(object : Permission.Callback {
+                override fun onHasPermission() {
+                    saveBitmap(currentImage.drawable.toBitmap())
+                }
+
+                override fun onNoPermission() {
+                    //requestPermissionLauncher.launch(saveExternalPermission)
+                    ActivityCompat.requestPermissions(
+                        this@MainActivity,
+                        arrayOf(SAVE_EXTERNAL_PERMISSION),
+                        SAVE_EXTERNAL_REQUEST_CODE
+                    )
+                }
+            })
+        }
+    }
+
+    private fun saveBitmap(bitmap: Bitmap) {
+        val values = ContentValues()
+        values.put(MediaStore.Images.Media.DATE_TAKEN, System.currentTimeMillis())
+        values.put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
+        values.put(MediaStore.Images.ImageColumns.WIDTH, bitmap.width)
+        values.put(MediaStore.Images.ImageColumns.HEIGHT, bitmap.height)
+
+        val uri = this.contentResolver.insert(saveDir, values) ?: return
+
+        contentResolver.openOutputStream(uri).use {
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, it)
+        }
+    }
+
+    private fun bindViews() {
+        currentImage = findViewById(R.id.ivPhoto)
+        btnGallery = findViewById(R.id.btnGallery)
+        save = findViewById(R.id.btnSave)
+        slider = findViewById(R.id.slBrightness)
+        slContrast = findViewById(R.id.slContrast)
+        slSaturation = findViewById(R.id.slSaturation)
+        slGamma = findViewById(R.id.slGamma)
     }
 
     override fun onRequestPermissionsResult(
@@ -253,22 +167,15 @@ class MainActivity : AppCompatActivity() {
         grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        grantResults.forEachIndexed { index: Int, result: Int ->
-            if(result == PackageManager.PERMISSION_GRANTED) {
-                Log.d("PermissionRequest", "${permissions[index]} granted")
-                if(permissions[index] == Manifest.permission.READ_EXTERNAL_STORAGE) {
-                    galleryButton.callOnClick()
-                } else if(permissions[index] == Manifest.permission.WRITE_EXTERNAL_STORAGE) {
-                    saveButton.callOnClick()
-                }
-            } else {
-                Log.d("PermissionRequest", "${permissions[index]} denied")
+        if (requestCode == SAVE_EXTERNAL_REQUEST_CODE) {
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                onSaveClick()
             }
         }
     }
 
     // do not change this function
-    fun createBitmap(): Bitmap {
+    private fun createBitmap(): Bitmap {
         val width = 200
         val height = 100
         val pixels = IntArray(width * height)
@@ -286,9 +193,9 @@ class MainActivity : AppCompatActivity() {
                 // get color
                 R = x % 100 + 40
                 G = y % 100 + 80
-                B = (x+y) % 100 + 120
+                B = (x + y) % 100 + 120
 
-                pixels[index] = Color.rgb(R,G,B)
+                pixels[index] = Color.rgb(R, G, B)
 
             }
         }
@@ -297,9 +204,4 @@ class MainActivity : AppCompatActivity() {
         bitmapOut.setPixels(pixels, 0, width, 0, 0, width, height)
         return bitmapOut
     }
-    //
 }
-
-
-
-

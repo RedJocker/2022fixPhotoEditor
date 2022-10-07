@@ -1,173 +1,67 @@
-<?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:padding="5dp"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
-
+    android:orientation="vertical">
 
     <ImageView
         android:id="@+id/ivPhoto"
         android:layout_width="300dp"
         android:layout_height="300dp"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0" />
+        app:layout_constraintTop_toTopOf="parent"/>
 
     <Button
         android:id="@+id/btnGallery"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/gallery"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/btnSave"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/ivPhoto"
-        app:layout_constraintVertical_bias="0.132" />
-
+        android:text="@string/gallery"/>
     <Button
-        android:id="@+id/btnSave"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/save"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/btnGallery"
-        app:layout_constraintTop_toBottomOf="@id/ivPhoto"
-        app:layout_constraintVertical_bias="0.129" />
+    android:id="@+id/btnSave"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="@string/save"/>
 
-    <ScrollView
+
+    <com.google.android.material.slider.Slider
+        android:id="@+id/slBrightness"
+        android:valueFrom="-250"
+        android:valueTo="250"
+        android:stepSize="10"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:scrollbars="vertical"
-        android:scrollbarAlwaysDrawVerticalTrack="true"
-        app:layout_constraintTop_toBottomOf="@id/btnGallery"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-
-        >
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <TextView
-                android:id="@+id/labelBrightness"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:labelFor="@id/slBrightness"
-                android:text="brightness"
-                app:layout_constraintEnd_toStartOf="@id/slBrightness"
-                app:layout_constraintHorizontal_weight="0.25"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+        android:layout_height="wrap_content"
+        android:value="0"/>
 
 
-            <com.google.android.material.slider.Slider
-                android:id="@+id/slBrightness"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:stepSize="10"
-                android:value="0"
-                android:valueFrom="-250"
-                android:valueTo="250"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_weight="0.75"
-                app:layout_constraintStart_toEndOf="@id/labelBrightness"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <TextView
-                android:id="@+id/labelContrast"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:labelFor="@id/slContrast"
-                android:text="contrast"
-                app:layout_constraintEnd_toStartOf="@id/slContrast"
-                app:layout_constraintHorizontal_weight="0.25"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/slBrightness" />
-
-            <com.google.android.material.slider.Slider
-                android:id="@+id/slContrast"
-                android:stepSize="10"
-                android:value="0"
-                android:valueFrom="-250"
-                android:valueTo="250"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                app:layout_constraintTop_toBottomOf="@id/slBrightness"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@id/labelContrast"
-                app:layout_constraintHorizontal_weight="0.75"
-                />
-
-            <TextView
-                android:id="@+id/labelSaturation"
-                android:text="saturation"
-                android:labelFor="@id/slSaturation"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                app:layout_constraintEnd_toStartOf="@id/slSaturation"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/slContrast"
-                app:layout_constraintHorizontal_weight="0.25"
-                />
-
-            <com.google.android.material.slider.Slider
-                android:id="@+id/slSaturation"
-                android:stepSize="10.0"
-                android:value="0"
-                android:valueFrom="-250"
-                android:valueTo="250"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                app:layout_constraintTop_toBottomOf="@id/slContrast"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@id/labelContrast"
-                app:layout_constraintHorizontal_weight="0.75"
-                />
-
-            <TextView
-                android:id="@+id/labelGamma"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:labelFor="@id/slSaturation"
-                android:text="gamma"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@id/slGamma"
-                app:layout_constraintHorizontal_weight="0.25"
-                app:layout_constraintStart_toStartOf="parent"
-
-                app:layout_constraintTop_toBottomOf="@id/slSaturation"
-                app:layout_constraintVertical_bias="0.0" />
-
-            <com.google.android.material.slider.Slider
-                android:id="@+id/slGamma"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:stepSize="0.2"
-                android:value="1"
-                android:valueFrom="0.2"
-                android:valueTo="4"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_weight="0.75"
-                app:layout_constraintStart_toEndOf="@id/labelGamma"
-                app:layout_constraintTop_toBottomOf="@id/slSaturation"
-                app:layout_constraintVertical_bias="0.0" />
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-    </ScrollView>
+    <com.google.android.material.slider.Slider
+        android:id="@+id/slContrast"
+        android:valueFrom="-250"
+        android:valueTo="250"
+        android:stepSize="10"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:value="0"/>
 
 
+    <com.google.android.material.slider.Slider
+        android:id="@+id/slSaturation"
+        android:valueFrom="-250"
+        android:valueTo="250"
+        android:stepSize="10"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:value="0"/>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+
+    <com.google.android.material.slider.Slider
+        android:id="@+id/slGamma"
+        android:valueFrom="0.2"
+        android:valueTo="4"
+        android:stepSize="0.2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:value="1.0"/>
+
+
+</LinearLayout>

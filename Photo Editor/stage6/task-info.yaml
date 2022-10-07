@@ -18,3 +18,9 @@ files:
   visible: false
 - name: src/test/java/org/hyperskill/photoeditor/internals/AbstractUnitTest.kt
   visible: false
+- name: src/main/java/org/hyperskill/photoeditor/ImageProcessor.kt
+  visible: true
+- name: src/main/java/org/hyperskill/photoeditor/Permission.kt
+  visible: true
+- name: src/main/java/org/hyperskill/photoeditor/MainActivity.kt
+  visible: true
