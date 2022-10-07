@@ -8,15 +8,21 @@ import org.junit.runner.RunWith
 import org.junit.runners.MethodSorters
 import org.robolectric.RobolectricTestRunner
 
+
+
 // version 2.0
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 @RunWith(RobolectricTestRunner::class)
 class Stage6UnitTest : PhotoEditorUnitTest<MainActivity>(MainActivity::class.java) {
 
-    private val messageNullAfterFilters = "Image was null after filters been applied"
-    private val messageWrongValues = "Wrong values after filters been applied."
-    private val messageSynchronousCode = "Are your filters being applied asynchronously?"
-    private val marginError = 3
+    companion object {
+        const val messageNullAfterFilters = "Image was null after filters been applied"
+        const val messageWrongValues = "Wrong values after filters been applied."
+        const val messageSynchronousCode = "Are your filters being applied asynchronously?"
+        const val marginError = 3
+        const val calculationWaitTime = 600L
+    }
+
 
     @Test
     fun test01_checkHighBrightnessValue() {
@@ -26,7 +32,7 @@ class Stage6UnitTest : PhotoEditorUnitTest<MainActivity>(MainActivity::class.jav
             val initialRgb = singleColor(initialImage, 70, 60)
 
             slBrightness.value += 120
-            Thread.sleep(600)
+            Thread.sleep(calculationWaitTime)
             val actualImage0 =
                 (ivPhoto.drawable as BitmapDrawable?)?.bitmap ?: throw AssertionError(
                     messageNullAfterFilters)
@@ -36,7 +42,7 @@ class Stage6UnitTest : PhotoEditorUnitTest<MainActivity>(MainActivity::class.jav
             assertColorsValues(messageSynchronousCode, initialRgb, actualRgb0, marginError)
 
 
-            Thread.sleep(600)
+            Thread.sleep(calculationWaitTime)
             shadowLooper.runToEndOfTasks()
 
             val expectedRgb = Triple(230, 255, 255)
@@ -58,7 +64,7 @@ class Stage6UnitTest : PhotoEditorUnitTest<MainActivity>(MainActivity::class.jav
             val initialRgb = singleColor(initialImage, 70, 60)
 
             slContrast.value += 100
-            Thread.sleep(600)
+            Thread.sleep(calculationWaitTime)
             val actualImage0 =
                 (ivPhoto.drawable as BitmapDrawable?)?.bitmap ?: throw AssertionError(
                     messageNullAfterFilters)
@@ -67,7 +73,7 @@ class Stage6UnitTest : PhotoEditorUnitTest<MainActivity>(MainActivity::class.jav
             shadowLooper.runToEndOfTasks()
             assertColorsValues(messageSynchronousCode, initialRgb, actualRgb0, marginError)
 
-            Thread.sleep(600)
+            Thread.sleep(calculationWaitTime)
             shadowLooper.runToEndOfTasks()
 
             val expectedRgb = Triple(85, 154, 177)
@@ -89,7 +95,7 @@ class Stage6UnitTest : PhotoEditorUnitTest<MainActivity>(MainActivity::class.jav
             val initialRgb = singleColor(initialImage, 70, 60)
 
             slSaturation.value += 80
-            Thread.sleep(600)
+            Thread.sleep(calculationWaitTime)
             val actualImage0 =
                 (ivPhoto.drawable as BitmapDrawable?)?.bitmap ?: throw AssertionError(
                     messageNullAfterFilters)
@@ -98,7 +104,7 @@ class Stage6UnitTest : PhotoEditorUnitTest<MainActivity>(MainActivity::class.jav
             shadowLooper.runToEndOfTasks()
             assertColorsValues(messageSynchronousCode, initialRgb, actualRgb0, marginError)
 
-            Thread.sleep(600)
+            Thread.sleep(calculationWaitTime)
             shadowLooper.runToEndOfTasks()
 
             val expectedRgb = Triple(88, 146, 165)
@@ -122,7 +128,7 @@ class Stage6UnitTest : PhotoEditorUnitTest<MainActivity>(MainActivity::class.jav
 
             slGamma.value += 4 * slGamma.stepSize
 
-            Thread.sleep(600)
+            Thread.sleep(calculationWaitTime)
             val actualImage0 =
                 (ivPhoto.drawable as BitmapDrawable?)?.bitmap ?: throw AssertionError(
                     messageNullAfterFilters)
@@ -131,7 +137,7 @@ class Stage6UnitTest : PhotoEditorUnitTest<MainActivity>(MainActivity::class.jav
             shadowLooper.runToEndOfTasks()
             assertColorsValues(messageSynchronousCode, initialRgb, actualRgb0, marginError)
 
-            Thread.sleep(600)
+            Thread.sleep(calculationWaitTime)
             shadowLooper.runToEndOfTasks()
 
             val expectedRgb = Triple(56, 86, 98)
@@ -163,7 +169,7 @@ class Stage6UnitTest : PhotoEditorUnitTest<MainActivity>(MainActivity::class.jav
             slSaturation.value += slSaturation.stepSize * 5
             slGamma.value -= slGamma.stepSize * 2
 
-            Thread.sleep(600)
+            Thread.sleep(calculationWaitTime)
             val actualImage0 =
                 (ivPhoto.drawable as BitmapDrawable?)?.bitmap ?: throw AssertionError(
                     messageNullAfterFilters)
@@ -172,7 +178,7 @@ class Stage6UnitTest : PhotoEditorUnitTest<MainActivity>(MainActivity::class.jav
             shadowLooper.runToEndOfTasks()
             assertColorsValues(messageSynchronousCode, initialRgb, actualRgb0, marginError)
 
-            Thread.sleep(600)
+            Thread.sleep(calculationWaitTime)
             shadowLooper.runToEndOfTasks()
 
             val expectedRgb = Triple(36, 208, 246)
@@ -202,7 +208,7 @@ class Stage6UnitTest : PhotoEditorUnitTest<MainActivity>(MainActivity::class.jav
             slContrast.value -= slContrast.stepSize
             slBrightness.value += slBrightness.stepSize
 
-            Thread.sleep(600)
+            Thread.sleep(calculationWaitTime)
             val actualImage0 =
                 (ivPhoto.drawable as BitmapDrawable?)?.bitmap ?: throw AssertionError(
                     messageNullAfterFilters)
@@ -211,7 +217,7 @@ class Stage6UnitTest : PhotoEditorUnitTest<MainActivity>(MainActivity::class.jav
             shadowLooper.runToEndOfTasks()
             assertColorsValues(messageSynchronousCode, initialRgb, actualRgb0, marginError)
 
-            Thread.sleep(600)
+            Thread.sleep(calculationWaitTime)
             shadowLooper.runToEndOfTasks()
 
             val expectedRgb = Triple(71, 122, 186)
@@ -278,7 +284,7 @@ class Stage6UnitTest : PhotoEditorUnitTest<MainActivity>(MainActivity::class.jav
             slSaturation.value += slSaturation.stepSize * 10
             slSaturation.value += slSaturation.stepSize * 5
             slGamma.value -= slGamma.stepSize * 2
-            Thread.sleep(600)
+            Thread.sleep(calculationWaitTime)
 
             val actualBeforeImage =
                 (ivPhoto.drawable as BitmapDrawable?)?.bitmap ?: throw AssertionError(
@@ -292,7 +298,7 @@ class Stage6UnitTest : PhotoEditorUnitTest<MainActivity>(MainActivity::class.jav
                 )
             }
 
-            Thread.sleep(600)
+            Thread.sleep(calculationWaitTime)
             shadowLooper.runToEndOfTasks()
 
             val actualAfterImage =
