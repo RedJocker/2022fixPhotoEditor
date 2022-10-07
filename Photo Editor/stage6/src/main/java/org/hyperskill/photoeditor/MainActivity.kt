@@ -32,6 +32,18 @@ class MainActivity : AppCompatActivity() {
     private lateinit var slSaturation: Slider
     private lateinit var slGamma: Slider
     private var lastJob: Job? = null  // the field to keep track of the last job in case we wish to cancel it
+    private var loadedImage: Bitmap = Bitmap.createBitmap(10, 10, Bitmap.Config.RGB_565)
+        get() {
+            synchronized(field) {
+                return field.copy(field.config, true)
+            }
+        }
+        set(value) {
+            synchronized(field) {
+                field = value
+            }
+        }
+
 
     //private lateinit var binding: ActivityMainBinding
     private val imageResultLauncher =
@@ -39,6 +51,7 @@ class MainActivity : AppCompatActivity() {
             if (result.resultCode == Activity.RESULT_OK) {
                 result.data?.data?.let {
                     val bitmap = imageProcessor.createBitmap(it)
+                    loadedImage = bitmap
                     currentImage.setImageBitmap(bitmap)
                 }
             }
@@ -46,6 +59,10 @@ class MainActivity : AppCompatActivity() {
 
     private fun callimageproc(bright: Float, contrast: Float, satur: Float, gamma: Float)  {
 
+        if(lastJob != null) {
+            lastJob?.cancel()
+            println("lastJob canceled")
+        }
 
         lastJob = GlobalScope.launch(Dispatchers.Default) {
             //  the execution inside this block is already asynchronous as you can see by the print below
@@ -61,7 +78,7 @@ class MainActivity : AppCompatActivity() {
             // it will schedule a new coroutine task and return a Deferred object that will have the
             // returned value
             val brightenCopyDeferred: Deferred<Bitmap> = this.async {
-                return@async imageProcessor.changeBrightness(bright.toInt(), contrast.toInt(), satur.toInt(), gamma.toDouble())
+                return@async imageProcessor.changeBrightness(bright.toInt(), contrast.toInt(), satur.toInt(), gamma.toDouble(), loadedImage)
             }
             // here we wait for the result
             val newBitmap: Bitmap = brightenCopyDeferred.await()
@@ -83,7 +100,8 @@ class MainActivity : AppCompatActivity() {
         //do not change this line
         val bitmap = createBitmap()
         currentImage.setImageBitmap(bitmap)
-        imageProcessor = ImageProcessor(this, bitmap)
+        loadedImage = bitmap
+        imageProcessor = ImageProcessor(this)
 
         btnGallery.setOnClickListener {
             val selectImageIntent = Intent(

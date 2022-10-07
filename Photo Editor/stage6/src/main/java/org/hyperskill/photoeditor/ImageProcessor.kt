@@ -9,28 +9,31 @@ import java.io.IOException
 import kotlin.math.pow
 
 
-class ImageProcessor(private val context: Context, private var loadedImage: Bitmap) {
+class ImageProcessor(private val context: Context) {
     private val coerceColor = { color: Int, value: Int -> (color + value).coerceIn(0..255) }
     private val contrast = { color: Int, alpha: Double, avg: Double -> (alpha * (color- avg) + avg).toInt().coerceIn(0..255) }
-    private val width = loadedImage.width
-    private val height = loadedImage.height
+    //private val width = loadedImage.width
+    //private val height = loadedImage.height
     fun createBitmap(uri: Uri): Bitmap {
-        loadedImage = BitmapFactory
+        val loadedImage = BitmapFactory
             .decodeStream(context.contentResolver.openInputStream(uri))
             ?: throw IOException("No such file or Incorrect format")
 
         return loadedImage
     }
 
-    fun changeBrightness(brightness: Int = 0, contrast: Int = 0, saturation: Int = 0, gamma : Double = 1.0): Bitmap {
-        if (brightness == 0 &&  contrast == 0 && saturation == 0 && gamma == 1.0) return loadedImage
+    fun changeBrightness(brightness: Int = 0, contrast: Int = 0, saturation: Int = 0, gamma : Double = 1.0, image: Bitmap): Bitmap {
+        if (brightness == 0 &&  contrast == 0 && saturation == 0 && gamma == 1.0) return image
+
+        val width = image.width
+        val height = image.height
 
         val pixelBuffer = IntArray(width * height)
         val newImage = Bitmap.createBitmap(
-            loadedImage.width, loadedImage.height,
+            width, height,
             Bitmap.Config.ARGB_8888
         )
-        loadedImage.getPixels(pixelBuffer, 0, width, 0, 0, width, height)
+        image.getPixels(pixelBuffer, 0, width, 0, 0, width, height)
 
         if (brightness != 0) {
             for (i in pixelBuffer.indices) {
