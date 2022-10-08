@@ -18,6 +18,7 @@
   </li>
   <li>Our goal is to make the app responsive while filters are processed. You don't need to speed up the computations themselves;</li>
   <li>If scheduled computation becomes irrelevant (slider values change before calculations) it would be a good thing to cancel that computation.</li>
+  <li>Remember, having mutable shared state can cause race conditions. Try not using mutable shared state</li>
 </ul>
 
 <p>Take a look at <a href="https://blog.mindorks.com/mastering-kotlin-coroutines-in-android-step-by-step-guide" rel="noopener noreferrer nofollow">Mastering Kotlin Coroutines In Android - Step By Step Guide</a> by Amit Shekhar to get more info on the subject. It may be also a good idea to follow <a href="https://www.youtube.com/watch?v=ShNhJ3wMpvQ&amp;list=PLQkwcJG4YTCQcFEPuYGuv54nYai_lwil_" rel="noopener noreferrer nofollow">the Kotlin Coroutines</a> playlist by Philipp Lackner.</p>
@@ -75,6 +76,9 @@ private fun onSliderChanges(slider: Slider, sliderValue: Float, fromUser: Boolea
     val contrastedCopy = /* invoke computations for contrast filter */
 
     /* do more calculations */
+
+    /* check if job was canceled */
+    ensureActive()
 
     // to update view, we need to change the thread context to the main thread
     runOnUiThread {
