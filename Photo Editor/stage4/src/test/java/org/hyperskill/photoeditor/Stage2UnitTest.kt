@@ -14,7 +14,7 @@ import org.robolectric.RobolectricTestRunner
 import kotlin.math.max
 import kotlin.math.min
 
-// version 2.0
+// version 2.0.1
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 @RunWith(RobolectricTestRunner::class)
 class Stage2UnitTest : PhotoEditorUnitTest<MainActivity>(MainActivity::class.java) {
@@ -159,8 +159,8 @@ class Stage2UnitTest : PhotoEditorUnitTest<MainActivity>(MainActivity::class.jav
     fun test07_checkDefaultBitmapEditExhaustive() {
         testActivity {
             slBrightness
-            val initialImage =
-                (ivPhoto.drawable as BitmapDrawable).bitmap // null checked on initialization
+            val initialBitmap = (ivPhoto.drawable as BitmapDrawable).bitmap // null checked on initialization
+            val initialImageImmutable = initialBitmap.copy(initialBitmap.config, false)
 
             slBrightness.value += slBrightness.stepSize * 15
             slBrightness.value -= slBrightness.stepSize * 4
@@ -171,9 +171,9 @@ class Stage2UnitTest : PhotoEditorUnitTest<MainActivity>(MainActivity::class.jav
             val actualImage1 = (ivPhoto.drawable as BitmapDrawable).bitmap ?: throw AssertionError(
                 messageNullAfterSlBrightness)
 
-            for (x in 0 until initialImage.width) {
-                for (y in 0 until initialImage.height) {
-                    val (initialRed, initialGreen, initialBlue) = singleColor(initialImage, x, y)
+            for (x in 0 until initialImageImmutable.width) {
+                for (y in 0 until initialImageImmutable.height) {
+                    val (initialRed, initialGreen, initialBlue) = singleColor(initialImageImmutable, x, y)
                     val expectedRed = max(0, min(initialRed + 110, 255))
                     val expectedGreen = max(0, min(initialGreen + 110, 255))
                     val expectedBlue = max(0, min(initialBlue + 110, 255))
