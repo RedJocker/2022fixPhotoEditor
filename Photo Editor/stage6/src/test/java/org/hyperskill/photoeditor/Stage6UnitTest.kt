@@ -9,8 +9,15 @@ import org.junit.runners.MethodSorters
 import org.robolectric.RobolectricTestRunner
 
 
-
-// version 2.0
+/*
+* Message for maintainers:
+* Tests are testing use of asynchronous code by assuming asynchronous code will run only after
+* calls to shadowLooper.runToEndOfTasks().
+* So first assertion is done on values stored before calling runToEndOfTasks, which should capture
+* solutions that are not using asynchronous code. These values should have before filter applied values.
+* Later assertions are assertion with filters already applied intended to capture incorrect calculations.
+* */
+// version 2.1
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 @RunWith(RobolectricTestRunner::class)
 class Stage6UnitTest : PhotoEditorUnitTest<MainActivity>(MainActivity::class.java) {
@@ -289,11 +296,12 @@ class Stage6UnitTest : PhotoEditorUnitTest<MainActivity>(MainActivity::class.jav
             val actualBeforeImage =
                 (ivPhoto.drawable as BitmapDrawable?)?.bitmap ?: throw AssertionError(
                     messageNullAfterFilters)
+            val actualBeforeImageImmutable = actualBeforeImage.copy(actualBeforeImage.config, false)
             shadowLooper.runToEndOfTasks()
             for (i in sample.indices) {
                 val point = sample[i]
-                val actual = singleColor(actualBeforeImage, point.first, point.second)
-                assertColorsValues("$messageWrongValues For x=${point.first}, y=${point.second}",
+                val actual = singleColor(actualBeforeImageImmutable, point.first, point.second)
+                assertColorsValues("$messageSynchronousCode For x=${point.first}, y=${point.second}",
                     expectedBefore[i], actual, marginError
                 )
             }
